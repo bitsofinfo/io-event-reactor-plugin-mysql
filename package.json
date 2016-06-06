@@ -1,0 +1,49 @@
+{
+    "name":"io-event-reactor-plugin-mysql",
+    "version":"1.0.0-beta.1",
+    "description":"Shell exec filesystem event reactor plugin for the io-event-reactor module",
+    "main":"mysqlReactorPlugin.js",
+    "directories":{
+        "test":"test"
+    },
+    "scripts":{
+        "test":"mocha test/all.js"
+    },
+    "keywords":[
+        "io-event-reactor",
+        "mysql",
+        "sql",
+        "rdbms",
+        "database",
+        "io",
+        "event",
+        "monitor",
+        "watch",
+        "file",
+        "directory",
+        "filesystem",
+        "directories"
+    ],
+    "dependencies":{
+        "mysql":"latest",
+        "mustache":"latest"
+    },
+    "devDependencies":{
+        "mocha":"latest"
+    },
+    "contributors":[
+        {
+            "name":"bitsofinfo",
+            "url":"http://bitsofinfo.wordpress.com"
+        }
+    ],
+    "license":"ISC",
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/bitsofinfo/io-event-reactor-plugin-mysql.git"
+    },
+    "bugs":{
+        "url":"https://github.com/bitsofinfo/io-event-reactor-plugin-mysql/issues"
+    },
+    "homepage":"https://github.com/bitsofinfo/io-event-reactor-plugin-mysql"
+}
