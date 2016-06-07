@@ -5,7 +5,6 @@ var util = require('util');
 var mysql = require('mysql');
 var Mustache = require('mustache');
 var fs = require('fs');
-var path = require('path');
 
 
 class MysqlReactorPlugin {
@@ -79,7 +78,9 @@ class MysqlReactorPlugin {
                             throw err;
                         }
 
-                        var output = this._sqlGenerator('add','/test/full/path/tothing',stats);
+                        var ioEvent = new IoEvent('add','/test/full/path/tothing',stats);
+
+                        var output = this._sqlGenerator(ioEvent);
                         this._log('info',"sqlGenerator() function returned test command to exec: " + output);
 
                     }).bind(this));
@@ -103,13 +104,11 @@ class MysqlReactorPlugin {
                             throw err;
                         }
 
+                        var ioEvent = new IoEvent('testEventType','/test/full/path/tothing',stats);
+
                         for (let template of this._sqlTemplates) {
                             try {
-                                var output = Mustache.render(template,{'ioEventType':'testEventType',
-                                                                       'fullPath':'/test/full/path/tothing',
-                                                                       'parentPath':'/test/full/path',
-                                                                       'filename':'tothing',
-                                                                       'optionalFsStats':stats});
+                                var output = Mustache.render(template,{'ioEvent':ioEvent});
 
                                 this._log('info',"sqlTemplate["+template+"] rendered to: " + output);
 
@@ -161,8 +160,6 @@ class MysqlReactorPlugin {
 
             self._log('info',"REACT["+self.getId()+"]() invoked: " + ioEvent.eventType + " for: " + ioEvent.fullPath);
 
-            var parentPath = path.dirname(ioEvent.fullPath) ;
-            var filename = path.basename(ioEvent.fullPath);
             var sqlStatementsToExec = [];
 
             /**
@@ -173,12 +170,7 @@ class MysqlReactorPlugin {
                 // for each template, render it and push on to list of commands to exec
                 for (let template of self._sqlTemplates) {
                     try {
-                        var sqlToExec = Mustache.render(template,{'ioEventType':ioEvent.eventType,
-                                                                      'fullPath':ioEvent.fullPath,
-                                                                      'parentPath':parentPath,
-                                                                      'filename':filename,
-                                                                      'optionalFsStats':ioEvent.optionalFsStats,
-                                                                      'optionalExtraInfo':ioEvent.optionalExtraInfo});
+                        var sqlToExec = Mustache.render(template,{'ioEvent':ioEvent});
                         if (sqlToExec) {
                             sqlStatementsToExec.push(sqlToExec);
                         }
@@ -192,15 +184,15 @@ class MysqlReactorPlugin {
             /**
             * #2 Collection sql statements to exec from SQL generator function
             */
-            if (self._sqlGenerator && typeof(_sqlGenerator) == 'function') {
+            if (self._sqlGenerator && typeof(self._sqlGenerator) == 'function') {
 
                 try {
                     // generate
-                    var generatedSqlStatements = self._sqlGenerator(ioEvent.eventType, ioEvent.fullPath, ioEvent.optionalFsStats, ioEvent.optionalExtraInfo);
+                    var generatedSqlStatements = self._sqlGenerator(ioEvent);
 
                     // concatenate them
                     if (generatedSqlStatements && generatedSqlStatements.length > 0) {
-                        sqlStatementsToExec.concat(generatedSqlStatements);
+                        sqlStatementsToExec = sqlStatementsToExec.concat(generatedSqlStatements);
                     }
 
                 } catch(e) {
