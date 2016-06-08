@@ -5,9 +5,9 @@ var assert = require('assert');
 
 var mysql = require('mysql');
 
-var EvaluatorUtil = require('../../io-event-reactor/ioReactor').EvaluatorUtil;
-var IoEvent = require('../../io-event-reactor-plugin-support').IoEvent;
-var IoReactorService = require('../../io-event-reactor');
+var EvaluatorUtil = require('io-event-reactor/ioReactor').EvaluatorUtil;
+var IoEvent = require('io-event-reactor-plugin-support').IoEvent;
+var IoReactorService = require('io-event-reactor');
 
 var logger = function(severity, origin, message) {
     if (severity != 'verbose') {
@@ -38,7 +38,7 @@ function generateMockConfig(evaluatorFunction, monitorTriggerConfigs) {
 
                       // mock monitor, will trigger mocked IoEvents according to monitorTriggerConfigs
                       monitor: {
-                          plugin: "../io-event-reactor/test/mockMonitor",
+                          plugin: "io-event-reactor/test/mockMonitor",
                           config: {
                               monitorTriggers: monitorTriggerConfigs
                           }
@@ -58,7 +58,7 @@ function generateMockConfig(evaluatorFunction, monitorTriggerConfigs) {
                       reactors: [
 
                           { id: "mysql1",
-                            plugin: "../io-event-reactor-plugin-mysql",
+                            plugin: "io-event-reactor-plugin-mysql",
                             config: {
                                   poolConfig : connConfig,
 

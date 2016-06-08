@@ -29,7 +29,8 @@
         "mustache":"latest"
     },
     "devDependencies":{
-        "mocha":"latest"
+        "mocha":"latest",
+        "io-event-reactor":"latest"
     },
     "contributors":[
         {
