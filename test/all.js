@@ -19,6 +19,14 @@ var errorCallback = function(message,error) {
     console.log("ERROR-CALLBACK! " + message + ' ' + error);
 };
 
+var connConfig = {
+   host     : process.env.mysqlHost,
+   user     : process.env.mysqlUser,
+   password : process.env.mysqlPw,
+   database : process.env.mysqlDb,
+   multipleStatements: true
+ };
+
 /**
 * Generates a IoEventService configuration based around a MockMonitorPlugin and the MysqlReactorPlugin
 *
@@ -58,7 +66,7 @@ function generateMockConfig(evaluatorFunction, monitorTriggerConfigs) {
                       reactors: [
 
                           { id: "mysql1",
-                            plugin: "io-event-reactor-plugin-mysql",
+                            plugin: "../../",
                             config: {
                                   poolConfig : connConfig,
 

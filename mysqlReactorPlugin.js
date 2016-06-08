@@ -217,14 +217,14 @@ class MysqlReactorPlugin {
                 connection.beginTransaction(function(err) {
 
                     if (err) {
-                        reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error starting transaction: " + error, error));
+                        reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error starting transaction: " + err, err));
                     }
 
                     for (let sql of sqlStatementsToExec) {
                         connection.query(sql, function(err, result) {
                             if (err) {
                                 return connection.rollback(function() {
-                                    reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error executing SQL: " + error, error));
+                                    reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error executing SQL: " + err, err));
                                 });
                             }
                         });
@@ -233,7 +233,7 @@ class MysqlReactorPlugin {
                     connection.commit(function(err) {
                         if (err) {
                             return connection.rollback(function() {
-                                reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error committing SQL: " + error, error));
+                                reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error committing SQL: " + err, err));
                             });
                         }
                         resolve(new ReactorResult(true,self.getId(),self._reactorId,ioEvent,"Executed SQL statements successfully"));
