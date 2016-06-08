@@ -53,7 +53,8 @@ var ioReactorServiceConf = {
                               user     : 'username',
                               password : 'pw',
                               database : 'dbname',
-                              multipleStatements: true
+                              multipleStatements: true,
+                              ....
                           },
 
                           /**
@@ -61,21 +62,23 @@ var ioReactorServiceConf = {
                           *                  in order using node-mysql when this plugin's react() is invoked.
                           *                  (all statements from here and sqlGenerator below exec in a single transaction)
                           *
-                          *  Supported mustache template variables that will be made available to you:
-                          *    - ioEventType: one of: 'add', 'addDir', 'unlink', 'unlinkDir', 'change'
-                          *    - fullPath: string full path to file being reacted to (filename/dir inclusive)
-                          *    - parentPath: full path to the directory containing the item manipulated
-                          *    - filename: filename/dirname only (no path information)
-                          *    - optionalFsStats: optional stats object -> https://nodejs.org/docs/latest/api/fs.html#fs_class_fs_stats
-                          *    - optionalExtraInfo: optional object, see the MonitorPlugin you are using to see the spec and when/if its available
+                          *  Supported mustache template variables that will be made available to you: (a full IoEvent)
+                          *    - see https://github.com/bitsofinfo/io-event-reactor-plugin-support for IoEvent definition
+                          *    - ioEvent.uuid
+                          *    - ioEvent.eventType: one of: 'add', 'addDir', 'unlink', 'unlinkDir', 'change'
+                          *    - ioEvent.fullPath: string full path to file being reacted to (filename/dir inclusive)
+                          *    - ioEvent.parentPath: full path to the directory containing the item manipulated
+                          *    - ioEvent.filename: filename/dirname only (no path information)
+                          *    - ioEvent.optionalFsStats: optional stats object -> https://nodejs.org/docs/latest/api/fs.html#fs_class_fs_stats
+                          *    - ioEvent.optionalExtraInfo: optional object, see the MonitorPlugin you are using to see the spec and when/if its available
                           */
                           sqlTemplates: [
                               'INSERT INTO io_event (eventType,fullPath,stats)      VALUES("{{{ioEvent.eventType}}}","{{{ioEvent.fullPath}}}","{{{ioEvent.optionalFsStats}}}")'
                           ],
 
                           /**
-                          *  - 'sqlGenerator' - callback function(ioEventType, fullPath, optionalFsStats, optionalExtraInfo) that must
-                          *                     return an array[] of sql statements literals that will be executed in order using
+                          *  - 'sqlGenerator' - callback function(ioEvent) that must return an array[] of sql
+                          *                     statements literals that will be executed in order using
                           *                     node-mysql when this plugin's react() is invoked.
                           *                     (all statements from here and sqlTemplates above exec in a single transaction)
                           */
