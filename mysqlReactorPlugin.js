@@ -209,41 +209,60 @@ class MysqlReactorPlugin {
             self._mysqlConnection.getConnection(function(err, connection) {
 
                 if (err) {
-                    reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,
+                    return reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,
                         "Error attempting to execute SQL statements: " + err, err));
-                    return;
                 }
 
                 connection.beginTransaction(function(err) {
 
                     if (err) {
-                        reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error starting transaction: " + err, err));
+                        return reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error starting transaction: " + err, err));
                     }
 
-                    for (let sql of sqlStatementsToExec) {
-                        connection.query(sql, function(err, result) {
-                            if (err) {
-                                return connection.rollback(function() {
-                                    reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error executing SQL: " + err, err));
-                                });
-                            }
-                        });
-                    }
+                    // due to callbacks, we need to do this recursively
+                    // to process all sql in a loop
+                    var sqlProcessor = function(sqlIndex) {
 
-                    connection.commit(function(err) {
-                        if (err) {
-                            return connection.rollback(function() {
-                                reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error committing SQL: " + err, err));
+                         if( sqlIndex < sqlStatementsToExec.length ) {
+
+                            // execute the query...
+                            connection.query(sqlStatementsToExec[sqlIndex], function(err, result) {
+
+                                // if error reject
+                                if (err) {
+                                    return connection.rollback(function() {
+                                        reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error executing SQL: " + err, err));
+                                    });
+
+                                // else recurse...
+                                } else {
+                                    sqlProcessor(sqlIndex+1);
+                                }
+                            });
+
+                        // no more to process.... we are done w/ out error
+                        } else {
+
+                            connection.commit(function(err) {
+                                if (err) {
+                                    return connection.rollback(function() {
+                                        reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error committing SQL: " + err, err));
+                                    });
+
+                                // committed OK, recurse!
+                                } else {
+                                    resolve(new ReactorResult(true,self.getId(),self._reactorId,ioEvent,"Executed SQL statements successfully"));
+                                }
                             });
                         }
-                        resolve(new ReactorResult(true,self.getId(),self._reactorId,ioEvent,"Executed SQL statements successfully"));
-                    });
+                    };
+
+                    // start it off
+                    sqlProcessor(0);
 
                 });
             });
         });
-
-
     }
 
     /**
