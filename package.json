@@ -1,7 +1,7 @@
 {
     "name":"io-event-reactor-plugin-mysql",
-    "version":"1.0.0-beta.1",
-    "description":"Shell exec filesystem event reactor plugin for the io-event-reactor module",
+    "version":"1.0.0-beta.2",
+    "description":"Mysql event reactor plugin for the io-event-reactor module",
     "main":"mysqlReactorPlugin.js",
     "directories":{
         "test":"test"
@@ -25,6 +25,7 @@
         "directories"
     ],
     "dependencies":{
+        "io-event-reactor-plugin-support":"latest",
         "mysql":"latest",
         "mustache":"latest"
     },

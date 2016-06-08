@@ -1,7 +1,7 @@
 'use strict'
 
-var IoEvent = require('../io-event-reactor-plugin-support').IoEvent;
-var ReactorResult = require('../io-event-reactor-plugin-support').ReactorResult;
+var IoEvent = require('io-event-reactor-plugin-support').IoEvent;
+var ReactorResult = require('io-event-reactor-plugin-support').ReactorResult;
 
 var util = require('util');
 var mysql = require('mysql');
