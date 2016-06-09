@@ -70,7 +70,7 @@ class MysqlReactorPlugin {
             }
 
             // Handle 'sqlGenerator'
-            if (typeof(pluginConfig.sqlGenerator) != 'undefined') {
+            if (typeof(pluginConfig.sqlGenerator) == 'function') {
                 this._sqlGenerator = pluginConfig.sqlGenerator;
 
                 // test/validate it
@@ -97,7 +97,7 @@ class MysqlReactorPlugin {
 
 
             // Handle 'sqlTemplates', pre-test them all
-            if (typeof(pluginConfig.sqlTemplates) != 'undefined') {
+            if (typeof(pluginConfig.sqlTemplates) != 'undefined' && pluginConfig.sqlTemplates != null) {
                 try {
                     this._sqlTemplates = pluginConfig.sqlTemplates;
 
