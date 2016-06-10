@@ -211,7 +211,9 @@ class MysqlReactorPlugin {
             self._mysqlConnection.getConnection(function(err, connection) {
 
                 if (err) {
-                    connection.release();
+                    if (typeof(connection) != 'undefined') {
+                        connection.release();
+                    }
                     return reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,
                         "Error attempting to execute SQL statements: " + err, err));
                 }
