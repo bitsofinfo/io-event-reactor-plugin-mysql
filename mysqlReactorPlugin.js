@@ -211,6 +211,7 @@ class MysqlReactorPlugin {
             self._mysqlConnection.getConnection(function(err, connection) {
 
                 if (err) {
+                    connection.release();
                     return reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,
                         "Error attempting to execute SQL statements: " + err, err));
                 }
@@ -218,6 +219,7 @@ class MysqlReactorPlugin {
                 connection.beginTransaction(function(err) {
 
                     if (err) {
+                        connection.release();
                         return reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error starting transaction: " + err, err));
                     }
 
@@ -233,6 +235,7 @@ class MysqlReactorPlugin {
                                 // if error reject
                                 if (err) {
                                     return connection.rollback(function() {
+                                        connection.release();
                                         reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error executing SQL: " + err, err));
                                     });
 
@@ -248,11 +251,13 @@ class MysqlReactorPlugin {
                             connection.commit(function(err) {
                                 if (err) {
                                     return connection.rollback(function() {
+                                        connection.release();
                                         reject(new ReactorResult(false,self.getId(),self._reactorId,ioEvent,"Error committing SQL: " + err, err));
                                     });
 
                                 // committed OK, recurse!
                                 } else {
+                                    connection.release();
                                     resolve(new ReactorResult(true,self.getId(),self._reactorId,ioEvent,"Executed SQL statements successfully"));
                                 }
                             });
